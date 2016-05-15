@@ -5,6 +5,7 @@
 
     var cellToHighlight;
     var messageBanner;
+    var markdownString;
 
     // The initialize function must be run each time a new page is loaded.
     Office.initialize = function (reason) {
@@ -59,6 +60,7 @@
     }
 
     function hightlightHighestValue() {
+        markdownString = "";
 
         // Run a batch operation against the Excel object model
         Excel.run(function (ctx) {
@@ -69,33 +71,35 @@
             // Run the queued-up command, and return a promise to indicate task completion
             return ctx.sync()
                 .then(function () {
-                    var highestRow = 0;
-                    var highestCol = 0;
-                    var highestValue = sourceRange.values[0][0];
 
                     // Find the cell to highlight
                     for (var i = 0; i < sourceRange.rowCount; i++) {
                         for (var j = 0; j < sourceRange.columnCount; j++) {
-                            if (!isNaN(sourceRange.values[i][j]) && sourceRange.values[i][j] > highestValue) {
-                                highestRow = i;
-                                highestCol = j;
-                                highestValue = sourceRange.values[i][j];
+
+                            markdownString = markdownString.concat(sourceRange.values[i][j]);
+                            if (j <= sourceRange.columnCount - 1) {
+                                markdownString = markdownString.concat('|');
                             }
+
+                            if (i == 0 && j == sourceRange.columnCount - 1) {
+                                markdownString = markdownString.concat('\n');
+
+                                for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
+                                    markdownString = markdownString.concat('---');
+                                    markdownString = markdownString.concat('|');
+                                }
+                               
+                            }
+                            
                         }
+                        markdownString = markdownString.concat('\n');
                     }
 
-                    cellToHighlight = sourceRange.getCell(highestRow, highestCol);
-                    sourceRange.worksheet.getUsedRange().format.fill.clear();
-                    sourceRange.worksheet.getUsedRange().format.font.bold = false;
-
-                    cellToHighlight.load("values");
                 })
                    // Run the queued-up commands
                 .then(ctx.sync)
                 .then(function () {
-                    // Highlight the cell
-                    cellToHighlight.format.fill.color = "orange";
-                    cellToHighlight.format.font.bold = true;
+                    $("#markdown-result").text(markdownString);
                 })
                 .then(ctx.sync)
         })
