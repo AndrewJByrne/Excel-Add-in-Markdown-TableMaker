@@ -5,7 +5,6 @@
 
     var cellToHighlight;
     var messageBanner;
-    var markdownString;
 
     // The initialize function must be run each time a new page is loaded.
     Office.initialize = function (reason) {
@@ -21,20 +20,20 @@
                 $('#button-text').text("Display!");
                 $('#button-desc').text("Display the selection");
 
-                $('#highlight-button').click(
+                $('#generate-button').click(
                     displaySelectedCells);
                 return;
             }
 
-            $("#template-description").text("This sample highlights the highest value from the cells you have selected in the spreadsheet.");
-            $('#button-text').text("Highlight!");
-            $('#button-desc').text("Highlights the largest number.");
+            $("#template-description").text("Create table markdown from the range of cells you select.");
+            $('#button-text').text("Generate!");
+            $('#button-desc').text("Generates table markdown for the selected range.");
                 
             loadSampleData();
 
-            // Add a click event handler for the highlight button.
-            $('#highlight-button').click(
-                hightlightHighestValue);
+            // Add a click event handler for the generate button.
+            $('#generate-button').click(
+                generateTableMarkdown);
         });
     }
 
@@ -59,8 +58,8 @@
         .catch(errorHandler);
     }
 
-    function hightlightHighestValue() {
-        markdownString = "";
+    function generateTableMarkdown() {
+        var markdownString = "";
 
         // Run a batch operation against the Excel object model
         Excel.run(function (ctx) {
@@ -100,6 +99,7 @@
                 .then(ctx.sync)
                 .then(function () {
                     $("#markdown-result").text(markdownString);
+
                 })
                 .then(ctx.sync)
         })
