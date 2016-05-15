@@ -25,12 +25,12 @@
                 return;
             }
 
-            $("#template-description").text("Create table markdown from the range of cells you select.");
+            $("#template-description").text("Create table Markdown from the range of cells you select.");
             $('#button-text').text("Generate!");
-            $('#button-desc').text("Generates table markdown for the selected range.");
+            $('#button-desc').text("Generates table Markdown for the selected range.");
 
             $('#copy-button-text').text("Copy");
-            $('#copy-button-desc').text("Copies markdown to clipboard");
+            $('#copy-button-desc').text("Copies Markdown to clipboard");
                 
             loadSampleData();
 
