@@ -71,34 +71,44 @@
             return ctx.sync()
                 .then(function () {
 
-                    // Find the cell to highlight
-                    for (var i = 0; i < sourceRange.rowCount; i++) {
-                        for (var j = 0; j < sourceRange.columnCount; j++) {
+                    if (sourceRange.rowCount < 2 || sourceRange.columnCount < 1) {
+                        showNotification("No data selected", "Please select a range of data and try again.");
+                    }
+                    else {
 
-                            markdownString = markdownString.concat(sourceRange.values[i][j]);
-                            if (j <= sourceRange.columnCount - 1) {
-                                markdownString = markdownString.concat('|');
-                            }
+                        // Find the cell to highlight
+                        for (var i = 0; i < sourceRange.rowCount; i++) {
+                            for (var j = 0; j < sourceRange.columnCount; j++) {
 
-                            if (i == 0 && j == sourceRange.columnCount - 1) {
-                                markdownString = markdownString.concat('\n');
-
-                                for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
-                                    markdownString = markdownString.concat('---');
+                                markdownString = markdownString.concat(sourceRange.values[i][j]);
+                                if (j <= sourceRange.columnCount - 1) {
                                     markdownString = markdownString.concat('|');
                                 }
-                               
+
+                                if (i == 0 && j == sourceRange.columnCount - 1) {
+                                    markdownString = markdownString.concat('\n');
+
+                                    for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
+                                        markdownString = markdownString.concat('---');
+                                        markdownString = markdownString.concat('|');
+                                    }
+
+                                }
+
                             }
-                            
+                            markdownString = markdownString.concat('\n');
                         }
-                        markdownString = markdownString.concat('\n');
                     }
 
                 })
                    // Run the queued-up commands
                 .then(ctx.sync)
                 .then(function () {
-                    $("#markdown-result").text(markdownString);
+                    if (markdownString.length > 0) {
+                        showNotification("Table markdown generated!", "");
+
+                        $("#markdown-result").text(markdownString);
+                    }
 
                 })
                 .then(ctx.sync)
