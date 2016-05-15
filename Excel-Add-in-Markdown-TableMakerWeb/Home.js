@@ -108,6 +108,7 @@
                         showNotification("Table markdown generated!", "");
 
                         $("#markdown-result").text(markdownString);
+                        $("#markdown-result").select();
                     }
 
                 })
