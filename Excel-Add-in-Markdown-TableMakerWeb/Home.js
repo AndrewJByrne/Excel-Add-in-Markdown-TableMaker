@@ -28,12 +28,19 @@
             $("#template-description").text("Create table markdown from the range of cells you select.");
             $('#button-text').text("Generate!");
             $('#button-desc').text("Generates table markdown for the selected range.");
+
+            $('#copy-button-text').text("Copy");
+            $('#copy-button-desc').text("Copies markdown to clipboard");
                 
             loadSampleData();
 
             // Add a click event handler for the generate button.
             $('#generate-button').click(
                 generateTableMarkdown);
+
+            // Add a click event handler for the copy button.
+            $('#copy-button').click(
+                copyToClipboard);
         });
     }
 
@@ -65,7 +72,7 @@
         Excel.run(function (ctx) {
 
             // Create a proxy object for the selected range and load its address and values properties
-            var sourceRange = ctx.workbook.getSelectedRange().load("values, address, rowIndex, columnIndex, rowCount, columnCount");
+            var sourceRange = ctx.workbook.getSelectedRange().load("text, values, address, rowIndex, columnIndex, rowCount, columnCount");
 
             // Run the queued-up command, and return a promise to indicate task completion
             return ctx.sync()
@@ -78,19 +85,23 @@
 
                         // Find the cell to highlight
                         for (var i = 0; i < sourceRange.rowCount; i++) {
+
+                            markdownString = markdownString.concat('| ');
+
                             for (var j = 0; j < sourceRange.columnCount; j++) {
 
                                 markdownString = markdownString.concat(sourceRange.values[i][j]);
                                 if (j <= sourceRange.columnCount - 1) {
-                                    markdownString = markdownString.concat('|');
+                                    markdownString = markdownString.concat('| ');
                                 }
 
                                 if (i == 0 && j == sourceRange.columnCount - 1) {
+                                    // This is the header row, so I need to add a row of 3-dash columns
                                     markdownString = markdownString.concat('\n');
-
+                                    markdownString = markdownString.concat('| ');
                                     for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
                                         markdownString = markdownString.concat('---');
-                                        markdownString = markdownString.concat('|');
+                                        markdownString = markdownString.concat('| ');
                                     }
 
                                 }
@@ -108,13 +119,21 @@
                         showNotification("Table markdown generated!", "");
 
                         $("#markdown-result").text(markdownString);
-                        $("#markdown-result").select();
                     }
 
                 })
                 .then(ctx.sync)
         })
         .catch(errorHandler);
+    }
+
+    function copyToClipboard() {
+
+        // Make sure the text in markdown-result is selected
+        $("#markdown-result").select();
+
+        // Call Copy
+        document.execCommand('Copy');
     }
 
     function displaySelectedCells() {
