@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excel-Add-in-Markdown-TableMaker", "Excel-Add-in-Markdown-TableMaker\Excel-Add-in-Markdown-TableMaker.csproj", "{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excel-Add-in-Markdown-TableMakerWeb", "Excel-Add-in-Markdown-TableMakerWeb\Excel-Add-in-Markdown-TableMakerWeb.csproj", "{6D94072C-4FF5-4935-9432-AC645DB2B439}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEC2A6F-F83A-4667-ACC3-4B5BBD51442B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6D94072C-4FF5-4935-9432-AC645DB2B439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D94072C-4FF5-4935-9432-AC645DB2B439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D94072C-4FF5-4935-9432-AC645DB2B439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D94072C-4FF5-4935-9432-AC645DB2B439}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
