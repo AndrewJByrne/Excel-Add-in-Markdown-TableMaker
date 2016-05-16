@@ -25,7 +25,7 @@
                 return;
             }
 
-            $("#template-description").text("Create table Markdown from the range of cells you select.");
+            $("#template-description").text("Select a cell range and then tap the Generate button to produce the table Markdown.");
             $('#button-text').text("Generate!");
             $('#button-desc').text("Generates table Markdown for the selected range.");
 
