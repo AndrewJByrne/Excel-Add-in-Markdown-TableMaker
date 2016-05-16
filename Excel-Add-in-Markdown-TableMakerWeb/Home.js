@@ -82,33 +82,62 @@
                         showNotification("No data selected", "Please select a range of data and try again.");
                     }
                     else {
+                        // I am demonstrating two ways of generating the markdown string. This first method uses the 
+                        // join method on an Array object. The second method uses brute-force, iterating over every element
+                        // in the array. The first method also has fewer loops and no conditionals. On large ranges, this method
+                        // out-performs the sencodn method by over a factor of 10. However, perf seems to be negligible for 
+                        // small ranges and the second method offers more flexibility. 
 
-                        // Find the cell to highlight
-                        for (var i = 0; i < sourceRange.rowCount; i++) {
+                        console.time('Function #1');
+                        // First row is the header row
+                        markdownString = markdownString.concat('| ');
+                        markdownString = markdownString.concat(sourceRange.values[0].join('| '));
+                        markdownString = markdownString.concat('|\n');
 
+                        // Add the header delimeter
+                        markdownString = markdownString.concat('| ');
+                        for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
+                            markdownString = markdownString.concat('---');
                             markdownString = markdownString.concat('| ');
+                        }
+                        markdownString = markdownString.concat('\n');
 
-                            for (var j = 0; j < sourceRange.columnCount; j++) {
-
-                                markdownString = markdownString.concat(sourceRange.values[i][j]);
-                                if (j <= sourceRange.columnCount - 1) {
-                                    markdownString = markdownString.concat('| ');
-                                }
-
-                                if (i == 0 && j == sourceRange.columnCount - 1) {
-                                    // This is the header row, so I need to add a row of 3-dash columns
-                                    markdownString = markdownString.concat('\n');
-                                    markdownString = markdownString.concat('| ');
-                                    for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
-                                        markdownString = markdownString.concat('---');
-                                        markdownString = markdownString.concat('| ');
-                                    }
-
-                                }
-
-                            }
+                        // Now at the rest of the rows
+                        for (var i = 1; i < sourceRange.rowCount; i++) {
+                            markdownString = markdownString.concat('| ');
+                            markdownString = markdownString.concat(sourceRange.values[i].join('| '));
                             markdownString = markdownString.concat('\n');
                         }
+                        console.timeEnd('Function #1');
+
+                        //console.time('Function #2');
+                        //markdownString = "";
+                        //for (var i = 0; i < sourceRange.rowCount; i++) {
+
+                        //    markdownString = markdownString.concat('| ');
+
+                        //    for (var j = 0; j < sourceRange.columnCount; j++) {
+
+                        //        markdownString = markdownString.concat(sourceRange.values[i][j]);
+                        //        if (j <= sourceRange.columnCount - 1) {
+                        //            markdownString = markdownString.concat('| ');
+                        //        }
+
+                        //        if (i == 0 && j == sourceRange.columnCount - 1) {
+                        //            // This is the header row, so I need to add a row of 3-dash columns
+                        //            markdownString = markdownString.concat('\n');
+                        //            markdownString = markdownString.concat('| ');
+                        //            for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
+                        //                markdownString = markdownString.concat('---');
+                        //                markdownString = markdownString.concat('| ');
+                        //            }
+
+                        //        }
+
+                        //    }
+                        //    markdownString = markdownString.concat('\n');
+                        //}
+                        //console.timeEnd('Function #2');
                     }
 
                 })
