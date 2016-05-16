@@ -10,13 +10,16 @@ Excel's tabular style lends itself nicely to creating tables of data, but how do
 1.  Copy the project to a local folder and open the Excel-Add-in-Markdown-TableMaker.sln in Visual Studio.
 2.  Press *F5* to build and deploy the sample add-in. Excel launches with a empty worksheet and a new command group is added to the ribbon.  
         
-  * Add image
+  ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/launch.PNG)
 
 3.  Tap the command labelled **TabMD** in the ribbon to open the task pane and populate the spreadsheet with test data. 
 
-  * Add Image
+  ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/open-tab.PNG)
   
 4.  Select a range of cells in the spreadsheet and select **Generate!** in the task pane.
+
+  ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/generate.PNG)
+  
 5.  The table markdown for this range is generated and displayed in the task pane's text field. 
 6.  You can copy this markdown by selecting **Copy** and then paste it into a markdown (.md) file to preview in your favorite markdown editor. 
 
