@@ -16,7 +16,7 @@ Excel's tabular style lends itself nicely to creating tables of data, but how do
 
   ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/open-tab.PNG)
   
-4.  Select a range of cells in the spreadsheet and select **Generate!** in the task pane.
+4.  Select a range of cells in the spreadsheet and tap the **Generate!** button in the add-in.
 
   ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/generate.PNG)
   
