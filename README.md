@@ -23,6 +23,9 @@ Excel's tabular style lends itself nicely to creating tables of data, but how do
 5.  The table markdown for this range is generated and displayed in the task pane's text field. 
 6.  You can copy this markdown by selecting **Copy** and then paste it into a markdown (.md) file to preview in your favorite markdown editor. 
 
+### Further work
+To see a list of enhancements or to log an issue, visit the [issues](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/issues) page of this repo. 
+
 
 ### Learn more
 
