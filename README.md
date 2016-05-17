@@ -8,6 +8,10 @@ Excel's tabular style lends itself nicely to creating tables of data, but how do
 
 ### Visual Studio version
 1.  Copy the project to a local folder and open the Excel-Add-in-Markdown-TableMaker.sln in Visual Studio.
+
+    > Make sure the project **Excel-Add-in-Markdown-TableMaker** is set as the startup project in the solution. To run the add-in in the Excel desktop client, set the **Start Action** to *Office Desktop Client*
+    
+    
 2.  Press *F5* to build and deploy the sample add-in. Excel launches with a empty worksheet and a new command group is added to the ribbon.  
         
   ![](https://github.com/AndrewJByrne/Excel-Add-in-Markdown-TableMaker/blob/master/readme-images/launch.PNG)
