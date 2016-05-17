@@ -85,7 +85,7 @@
                         // I am demonstrating two ways of generating the markdown string. This first method uses the 
                         // join method on an Array object. The second method uses brute-force, iterating over every element
                         // in the array. The first method also has fewer loops and no conditionals. On large ranges, this method
-                        // out-performs the sencodn method by over a factor of 10. However, perf seems to be negligible for 
+                        // out-performs the second method by over a factor of 10. However, perf seems to be negligible for 
                         // small ranges and the second method offers more flexibility. 
 
                         console.time('Function #1');
@@ -186,6 +186,8 @@
         }
     }
 
+    // Checks whether the value in a cell is a URL and generates the Markdown to 
+    // represent it properly as a link. Also handles image URLs too. 
     function detectUrl(value) {
         var newValue = value;
 
@@ -198,11 +200,12 @@
         return newValue;
     }
 
-
+    // Regex to detect a URL
     function isUrl(text) {
         return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
     }
 
+    // Regex to detect and image file name
     function isImage(text) {
         return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
     }
