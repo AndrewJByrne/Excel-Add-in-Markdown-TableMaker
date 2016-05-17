@@ -15,15 +15,15 @@
             messageBanner.hideBanner();
             
             // If not using Excel 2016, use fallback logic.
-            //if (!Office.context.requirements.isSetSupported('ExcelApi', '1.1')) {
-            //    $("#template-description").text("This sample will display the value of the cells you have selected in the spreadsheet.");
-            //    $('#button-text').text("Display!");
-            //    $('#button-desc').text("Display the selection");
+            if (!Office.context.requirements.isSetSupported('ExcelApi', '1.1')) {
+                $("#template-description").text("This sample will display the value of the cells you have selected in the spreadsheet.");
+                $('#button-text').text("Display!");
+                $('#button-desc').text("Display the selection");
 
-            //    $('#generate-button').click(
-            //        displaySelectedCells);
-            //    return;
-            //}
+                $('#generate-button').click(
+                    displaySelectedCells);
+                return;
+            }
 
             $("#template-description").text("Select a cell range and then tap the Generate button to produce the table Markdown.");
             $('#button-text').text("Generate!");
