@@ -15,15 +15,15 @@
             messageBanner.hideBanner();
             
             // If not using Excel 2016, use fallback logic.
-            if (!Office.context.requirements.isSetSupported('ExcelApi', '1.1')) {
-                $("#template-description").text("This sample will display the value of the cells you have selected in the spreadsheet.");
-                $('#button-text').text("Display!");
-                $('#button-desc').text("Display the selection");
+            //if (!Office.context.requirements.isSetSupported('ExcelApi', '1.1')) {
+            //    $("#template-description").text("This sample will display the value of the cells you have selected in the spreadsheet.");
+            //    $('#button-text').text("Display!");
+            //    $('#button-desc').text("Display the selection");
 
-                $('#generate-button').click(
-                    displaySelectedCells);
-                return;
-            }
+            //    $('#generate-button').click(
+            //        displaySelectedCells);
+            //    return;
+            //}
 
             $("#template-description").text("Select a cell range and then tap the Generate button to produce the table Markdown.");
             $('#button-text').text("Generate!");
@@ -91,7 +91,7 @@
                         console.time('Function #1');
                         // First row is the header row
                         markdownString = markdownString.concat('| ');
-                        markdownString = markdownString.concat(sourceRange.values[0].join('| '));
+                        markdownString = markdownString.concat(sourceRange.values[0].map(detectUrl).join('| '));
                         markdownString = markdownString.concat('|\n');
 
                         // Add the header delimeter
@@ -105,7 +105,7 @@
                         // Now at the rest of the rows
                         for (var i = 1; i < sourceRange.rowCount; i++) {
                             markdownString = markdownString.concat('| ');
-                            markdownString = markdownString.concat(sourceRange.values[i].join('| '));
+                            markdownString = markdownString.concat(sourceRange.values[i].map(detectUrl).join('| '));
                             markdownString = markdownString.concat('\n');
                         }
                         console.timeEnd('Function #1');
@@ -184,6 +184,27 @@
         if (error instanceof OfficeExtension.Error) {
             console.log("Debug info: " + JSON.stringify(error.debugInfo));
         }
+    }
+
+    function detectUrl(value) {
+        var newValue = value;
+
+        if (isUrl(value)) {
+            var prefix = isImage(value) ? "!" : "";
+
+            newValue = prefix + "[" + value + "](" + value + ")";
+        }
+            
+        return newValue;
+    }
+
+
+    function isUrl(text) {
+        return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
+    }
+
+    function isImage(text) {
+        return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
     }
 
     // Helper function for displaying notifications
