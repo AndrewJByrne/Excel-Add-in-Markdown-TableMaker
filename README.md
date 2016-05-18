@@ -1,5 +1,7 @@
 # Excel-Add-in-Markdown-TableMaker
 
+This sample shows how to create table markdown for a selected range in an Excel spreadsheet, making use of the Excel javascript APIs along the way. 
+
 [Markdown](https://en.wikipedia.org/wiki/Markdown) is a lightweight markup language with plain text formatting syntax designed so that it can be converted to other formats. It is the language of choice when creating readme files on GitHub. Creating tables is not part of the code Markdown spec but they are supported by popular derivatives such as *Github-flavored Markdown (GFM)* and *Markdown Here*. In GFM, a table is specified using a series of dashes and pipes. Adam Pritchard's [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables)  does a great job of explaining how to create them. 
 
 Excel's tabular style lends itself nicely to creating tables of data, but how do we convert to table Markdown for use in a Markdown (.md) file? This sample to the rescue! It takes a range of data you have selected and outputs the Markdown that is needed to represent that range as a table. It is written as an Excel Add-in and uses the Excel JavaScript APIs to load, iterate over and read a range of data from a spreadsheet.  
