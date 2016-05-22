@@ -71,79 +71,101 @@
         // Run a batch operation against the Excel object model
         Excel.run(function (ctx) {
 
-            // Create a proxy object for the selected range and load its address and values properties
-            var sourceRange = ctx.workbook.getSelectedRange().load("text, values, address, rowIndex, columnIndex, rowCount, columnCount");
-
+            // Create a proxy object for the selected range and load some properties
+            var sourceRange = ctx.workbook.getSelectedRange().load("rowIndex, columnIndex, rowCount, columnCount");
+            
             // Run the queued-up command, and return a promise to indicate task completion
             return ctx.sync()
                 .then(function () {
 
-                    if (sourceRange.rowCount < 2 || sourceRange.columnCount < 1) {
+                    if (sourceRange.rowCount < 1 || sourceRange.columnCount < 1) {
                         showNotification("No data selected", "Please select a range of data and try again.");
                     }
                     else {
-                        // I am demonstrating two ways of generating the markdown string. This first method uses the 
-                        // join method on an Array object. The second method uses brute-force, iterating over every element
-                        // in the array. The first method also has fewer loops and no conditionals. On large ranges, this method
-                        // out-performs the second method by over a factor of 10. However, perf seems to be negligible for 
-                        // small ranges and the second method offers more flexibility. 
+                        console.time('Get Cells');
+                        var rows = [];
+                        for (var i = 0; i < sourceRange.rowCount; i++) {
+                            var col = [];
+                            for (var j = 0; j < sourceRange.columnCount; j++) {
 
-                        console.time('Function #1');
-                        // First row is the header row
-                        markdownString = markdownString.concat('| ');
-                        markdownString = markdownString.concat(sourceRange.values[0].map(detectUrl).join('| '));
-                        markdownString = markdownString.concat('|\n');
-
-                        // Add the header delimeter
-                        markdownString = markdownString.concat('| ');
-                        for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
-                            markdownString = markdownString.concat('---');
-                            markdownString = markdownString.concat('| ');
+                                // Create a proxy object for a 1-cell range and load its value and format
+                                // Note: Because this is a range, I am retrieving a values array, even though
+                                // it will contain just one value for this one cell. 
+                                var cell = sourceRange.getCell(i, j).load(["values","format/*", "format/font"]);
+                                col.push(cell);
+                            }
+                            rows.push(col);
                         }
-                        markdownString = markdownString.concat('\n');
+                        console.timeEnd('Get Cells');
+                        return rows;
 
-                        // Now at the rest of the rows
-                        for (var i = 1; i < sourceRange.rowCount; i++) {
-                            markdownString = markdownString.concat('| ');
-                            markdownString = markdownString.concat(sourceRange.values[i].map(detectUrl).join('| '));
-                            markdownString = markdownString.concat('\n');
-                        }
-                        console.timeEnd('Function #1');
-
-                        //console.time('Function #2');
-                        //markdownString = "";
-                        //for (var i = 0; i < sourceRange.rowCount; i++) {
-
-                        //    markdownString = markdownString.concat('| ');
-
-                        //    for (var j = 0; j < sourceRange.columnCount; j++) {
-
-                        //        markdownString = markdownString.concat(sourceRange.values[i][j]);
-                        //        if (j <= sourceRange.columnCount - 1) {
-                        //            markdownString = markdownString.concat('| ');
-                        //        }
-
-                        //        if (i == 0 && j == sourceRange.columnCount - 1) {
-                        //            // This is the header row, so I need to add a row of 3-dash columns
-                        //            markdownString = markdownString.concat('\n');
-                        //            markdownString = markdownString.concat('| ');
-                        //            for (var cCount = 0; cCount < sourceRange.columnCount; cCount++) {
-                        //                markdownString = markdownString.concat('---');
-                        //                markdownString = markdownString.concat('| ');
-                        //            }
-
-                        //        }
-
-                        //    }
-                        //    markdownString = markdownString.concat('\n');
-                        //}
-                        //console.timeEnd('Function #2');
                     }
 
                 })
                    // Run the queued-up commands
                 .then(ctx.sync)
-                .then(function () {
+                .then(function (cells) {
+
+                    // I have now loaded all the data I need to produce markdown for the selected range.
+
+                    // I am demonstrating two ways of generating the markdown string. This first method uses the 
+                    // join method on an Array object. The second method uses brute-force, iterating over every element
+                    // in the array. The first method also has fewer loops and no conditionals. On large ranges, this method
+                    // out-performs the second method by over a factor of 10. However, perf seems to be negligible for 
+                    // small ranges and the second method offers more flexibility. 
+
+                    console.time('Method #1');
+
+                    // First row is the header row
+                    markdownString = markdownString.concat('| ');
+                    markdownString = markdownString.concat(cells[0].map(markdownize).join('| '));
+                    markdownString = markdownString.concat('|\n');
+
+                    // Add the header delimeter
+                    markdownString = markdownString.concat('| ');
+                    for (var cCount = 0; cCount < cells.length; cCount++) {
+                        markdownString = markdownString.concat('---');
+                        markdownString = markdownString.concat('| ');
+                    }
+                    markdownString = markdownString.concat('\n');
+
+                    // Now the rest of the rows
+                    for (var i = 1; i < cells.length; i++) {
+                        markdownString = markdownString.concat('| ');
+                        markdownString = markdownString.concat(cells[i].map(markdownize).join('| '));
+                        markdownString = markdownString.concat('|\n');
+                    }
+                    console.timeEnd('Method #1');
+
+                    //console.time('Method #2');
+                    //markdownString = "";
+                    //for (var i = 0; i < cells.length; i++) {
+
+                    //    markdownString = markdownString.concat('| ');
+
+                    //    for (var j = 0; j < sourceRange.columnCount; j++) {
+
+                    //        markdownString = markdownString.concat(markdownize(cells[i][j]));
+                    //        if (j <= sourceRange.columnCount - 1) {
+                    //            markdownString = markdownString.concat('| ');
+                    //        }
+
+                    //        if (i == 0 && j == sourceRange.columnCount - 1) {
+                    //            // This is the header row, so I need to add a row of 3-dash columns
+                    //            markdownString = markdownString.concat('\n');
+                    //            markdownString = markdownString.concat('| ');
+                    //            for (var cCount = 0; cCount < cells[0].length; cCount++) {
+                    //                markdownString = markdownString.concat('---');
+                    //                markdownString = markdownString.concat('| ');
+                    //            }
+
+                    //        }
+
+                    //    }
+                    //    markdownString = markdownString.concat('\n');
+                    //}
+                    //console.timeEnd('Method #2');
+
                     if (markdownString.length > 0) {
                         showNotification("Table markdown generated!", "");
 
@@ -154,6 +176,48 @@
                 .then(ctx.sync)
         })
         .catch(errorHandler);
+    }
+
+    // Create markdown for the given cell usign the value as well as
+    // formatting info. 
+    function markdownize(cell)
+    {
+        // I always get an array of values in this 1-cell range. 
+        var value = cell.values[0][0];
+        value = detectUrl(value);
+        value = addSugar(value, cell.format.font)
+        return value;
+    }
+
+    // Checks whether the value in a cell is a URL and generates the Markdown to 
+    // represent it properly as a link. Also handles image URLs too. 
+    function detectUrl(value) {
+        var newValue = value;
+
+        if (isUrl(value)) {
+            var prefix = isImage(value) ? "!" : "";
+
+            newValue = prefix + "[" + value + "](" + value + ")";
+        }
+        return newValue;
+    }
+
+    // Regex to detect a URL
+    function isUrl(text) {
+        return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
+    }
+
+    // Regex to detect and image file name
+    function isImage(text) {
+        return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
+    }
+
+    // Use the formatting info on the cell to add markup for a bold style 
+    function addSugar(value, font) {
+        if (font.bold) {
+            value = "**" + value + "**";
+        }
+        return value;
     }
 
     function copyToClipboard() {
@@ -186,29 +250,7 @@
         }
     }
 
-    // Checks whether the value in a cell is a URL and generates the Markdown to 
-    // represent it properly as a link. Also handles image URLs too. 
-    function detectUrl(value) {
-        var newValue = value;
-
-        if (isUrl(value)) {
-            var prefix = isImage(value) ? "!" : "";
-
-            newValue = prefix + "[" + value + "](" + value + ")";
-        }
-            
-        return newValue;
-    }
-
-    // Regex to detect a URL
-    function isUrl(text) {
-        return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
-    }
-
-    // Regex to detect and image file name
-    function isImage(text) {
-        return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
-    }
+    
 
     // Helper function for displaying notifications
     function showNotification(header, content) {
