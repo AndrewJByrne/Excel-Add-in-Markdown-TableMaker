@@ -219,7 +219,7 @@
         }
 
         if (font.italic) {
-            value = "*" + value + "*";
+            value = "_" + value + "_";
         }
 
         return value;
