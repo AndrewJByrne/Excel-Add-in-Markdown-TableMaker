@@ -217,6 +217,11 @@
         if (font.bold) {
             value = "**" + value + "**";
         }
+
+        if (font.italic) {
+            value = "*" + value + "*";
+        }
+
         return value;
     }
 
