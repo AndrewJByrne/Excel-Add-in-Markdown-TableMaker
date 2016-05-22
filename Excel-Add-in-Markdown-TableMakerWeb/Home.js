@@ -1,4 +1,5 @@
 ﻿/// <reference path="/Scripts/FabricUI/MessageBanner.js" />
+/// <reference path="./MarkdownTableMaker.js"/>
 
 (function () {
     "use strict";
@@ -70,7 +71,7 @@
 
         // Run a batch operation against the Excel object model
         Excel.run(function (ctx) {
-
+            
             // Create a proxy object for the selected range and load some properties
             var sourceRange = ctx.workbook.getSelectedRange().load("rowIndex, columnIndex, rowCount, columnCount");
             
@@ -105,6 +106,13 @@
                    // Run the queued-up commands
                 .then(ctx.sync)
                 .then(function (cells) {
+
+                    var markdownString = MarkdownTableMaker.makeMarkdownTable(cells);
+                    if (markdownString.length > 0) {
+                        showNotification("Table markdown generated!", "");
+
+                        $("#markdown-result").text(markdownString);
+                    }
 
                     // I have now loaded all the data I need to produce markdown for the selected range.
 
@@ -168,11 +176,7 @@
                     //}
                     //console.timeEnd('Method #2');
 
-                    if (markdownString.length > 0) {
-                        showNotification("Table markdown generated!", "");
-
-                        $("#markdown-result").text(markdownString);
-                    }
+                    
 
                 })
                 .then(ctx.sync)
