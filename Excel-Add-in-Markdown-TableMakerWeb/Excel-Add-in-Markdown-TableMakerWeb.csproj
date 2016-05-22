@@ -369,7 +369,7 @@
     <Content Include="Scripts\Office\metadata\features.xml" />
     <Content Include="Scripts\Office\MicrosoftAjax.js" />
     <Content Include="Scripts\_officeintellisense.js" />
-    <Content Include="MarkdownTableMaker.js" />
+    <Content Include="markdown-table-maker.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
