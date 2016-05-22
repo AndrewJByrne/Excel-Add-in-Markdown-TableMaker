@@ -124,7 +124,9 @@
                     // Add the header delimeter
                     markdownString = markdownString.concat('| ');
                     for (var cCount = 0; cCount < cells.length; cCount++) {
-                        markdownString = markdownString.concat('---');
+                        // Note: By adding colons to left and right of hyphens in the 
+                        // header delimeter row, I am making all content center-align
+                        markdownString = markdownString.concat(':---:');
                         markdownString = markdownString.concat('| ');
                     }
                     markdownString = markdownString.concat('\n');
@@ -185,7 +187,7 @@
         // I always get an array of values in this 1-cell range. 
         var value = cell.values[0][0];
         value = detectUrl(value);
-        value = addSugar(value, cell.format.font)
+        value = addSugar(value, cell.format);
         return value;
     }
 
@@ -213,12 +215,12 @@
     }
 
     // Use the formatting info on the cell to add markup for a bold style 
-    function addSugar(value, font) {
-        if (font.bold) {
+    function addSugar(value, format) {
+        if (format.bold) {
             value = "**" + value + "**";
         }
 
-        if (font.italic) {
+        if (format.italic) {
             value = "_" + value + "_";
         }
 
