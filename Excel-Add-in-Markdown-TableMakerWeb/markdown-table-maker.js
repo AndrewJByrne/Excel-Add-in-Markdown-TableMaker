@@ -1,27 +1,23 @@
 ﻿// markdown-table-maker.js
 var MarkdownTableMaker = (function() {
-  
     // expose to public
     return {
         // public name   : name of internal function
         makeMarkdownTable: makeMarkdownTable,
     }
 
-    // all private
-  
     /**
-     * Takes in an array of Excel cells and returns a string that represents this range in 
+     * Takes in an array of Excel cells and returns a string that represents this range in
      * table Markdown.
      */
     function makeMarkdownTable(cells) {
         var markdownString = "";
 
-        // I am demonstrating two ways of generating the markdown string. This first method uses the 
+        // I am demonstrating two ways of generating the markdown string. This first method uses the
         // join method on an Array object. The second method uses brute-force, iterating over every element
         // in the array. The first method also has fewer loops and no conditionals. On large ranges, this method
-        // out-performs the second method by over a factor of 10. However, perf seems to be negligible for 
-        // small ranges and the second method offers more flexibility. 
-
+        // out-performs the second method by over a factor of 10. However, perf seems to be negligible for
+        // small ranges and the second method offers more flexibility.
         console.time('Method #1');
 
         // First row is the header row
@@ -32,7 +28,7 @@ var MarkdownTableMaker = (function() {
         // Add the header delimeter
         markdownString = markdownString.concat('| ');
         for (var cCount = 0; cCount < cells.length; cCount++) {
-            // Note: By adding colons to left and right of hyphens in the 
+            // Note: By adding colons to left and right of hyphens in the
             // header delimeter row, I am making all content center-align
             markdownString = markdownString.concat(':---:');
             markdownString = markdownString.concat('| ');
@@ -79,8 +75,7 @@ var MarkdownTableMaker = (function() {
         return markdownString;
     }
 
-    // Create markdown for the given cell usign the value as well as
-    // formatting info. 
+    // Create markdown for the given cell using the value as well as formatting info.
     function markdownize(cell) {
         var value = detectUrl(cell.value);
 
@@ -94,8 +89,8 @@ var MarkdownTableMaker = (function() {
         return value;
     }
 
-    // Checks whether the value in a cell is a URL and generates the Markdown to 
-    // represent it properly as a link. Also handles image URLs too. 
+    // Checks whether the value in a cell is a URL and generates the Markdown to
+    // represent it properly as a link. Also handles image URLs too.
     function detectUrl(value) {
         var newValue = value;
 

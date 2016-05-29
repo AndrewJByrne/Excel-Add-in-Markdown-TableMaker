@@ -1,0 +1,8 @@
+﻿{
+  "version": "2.2.2",
+  "output": "Warning",
+  "ignore": [],
+  "options": {},
+  "globalVariables": [],
+  "cancelBuild": true
+}

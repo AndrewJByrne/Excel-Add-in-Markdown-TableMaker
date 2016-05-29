@@ -1,5 +1,6 @@
 ﻿/// <reference path="/Scripts/FabricUI/MessageBanner.js" />
 /// <reference path="./markdown-table-maker.js"/>
+/*jslint for:true*/
 
 (function () {
     "use strict";
@@ -14,7 +15,7 @@
             var element = document.querySelector('.ms-MessageBanner');
             messageBanner = new fabric.MessageBanner(element);
             messageBanner.hideBanner();
-            
+
             // If not using Excel 2016, use fallback logic.
             if (!Office.context.requirements.isSetSupported('ExcelApi', '1.1')) {
                 $("#template-description").text("This sample will display the value of the cells you have selected in the spreadsheet.");
@@ -32,7 +33,7 @@
 
             $('#copy-button-text').text("Copy");
             $('#copy-button-desc').text("Copies Markdown to clipboard");
-                
+
             loadSampleData();
 
             // Add a click event handler for the generate button.
@@ -43,9 +44,9 @@
             $('#copy-button').click(
                 onCopyClick);
         });
-    }
+    };
 
-   
+
     function onGenerateClick() {
         Excel
         .run(loadSelectedCells)
@@ -55,16 +56,19 @@
     }
 
     function loadSelectedCells(ctx) {
-            
+
         // Create a proxy object for the selected range and load some properties
-        var selectedRange; 
+        var selectedRange;
         var cells = [];
+        var col = [];
+        var r;
+        var c;
 
         selectedRange = ctx.workbook.getSelectedRange().load("rowCount, columnCount");
         return ctx.sync().then(function () {
-            for (var r = 0; r < selectedRange.rowCount; r++) {
-                var col = [];
-                for (var c = 0; c < selectedRange.columnCount; c++) {
+            for (r = 0; r < selectedRange.rowCount; r += 1) {
+                col = [];
+                for (c = 0; c < selectedRange.columnCount; c += 1) {
                     col.push(selectedRange.getCell(r, c).load("format/font/*, values"));
                 }
                 cells.push(col);
@@ -74,14 +78,17 @@
     }
 
     function generateMarkdown(cells) {
-        for (var r = 0; r < cells.length; r++) {
-            cells[r] = cells[r].map(function (cell) {
-                return {
-                    bold: cell.format.font.bold,
-                    italic: cell.format.font.italic,
-                    value: cell.values[0][0],
-                };
-            });
+        var r;
+        for (r = 0; r < cells.length; r += 1) {
+            cells[r] = cells[r].map(convertCell);
+        }
+
+        function convertCell(cell) {
+            return {
+                bold: cell.format.font.bold,
+                italic: cell.format.font.italic,
+                value: cell.values[0][0],
+            };
         }
 
         var markdownString = MarkdownTableMaker.makeMarkdownTable(cells)
