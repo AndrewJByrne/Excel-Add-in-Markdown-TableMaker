@@ -37,87 +37,63 @@
 
             // Add a click event handler for the generate button.
             $('#generate-button').click(
-                generateTableMarkdown);
+                onGenerateClick);
 
             // Add a click event handler for the copy button.
             $('#copy-button').click(
-                copyToClipboard);
+                onCopyClick);
         });
     }
 
-    function loadSampleData() {
-
-        var values = [
-                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)],
-                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)],
-                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)]
-        ];
-
-        // Run a batch operation against the Excel object model
-        Excel.run(function (ctx) {
-            // Create a proxy object for the active sheet
-            var sheet = ctx.workbook.worksheets.getActiveWorksheet();
-            // Queue a command to write the sample data to the worksheet
-            sheet.getRange("B3:D5").values = values;
-
-            // Run the queued-up commands, and return a promise to indicate task completion
-            return ctx.sync();
-        })
-        .catch(errorHandler);
+   
+    function onGenerateClick() {
+        Excel
+        .run(loadSelectedCells)
+        .then(generateMarkdown)
+        .then(showMarkdownString)
+        .catch(showError);
     }
 
-    function generateTableMarkdown() {
-        // Run a batch operation against the Excel object model
-        Excel.run(function (ctx) {
+    function loadSelectedCells(ctx) {
             
-            // Create a proxy object for the selected range and load some properties
-            var sourceRange = ctx.workbook.getSelectedRange().load("rowIndex, columnIndex, rowCount, columnCount");
-            
-            // Run the queued-up command, and return a promise to indicate task completion
-            return ctx.sync()
-                .then(function () {
+        // Create a proxy object for the selected range and load some properties
+        var selectedRange; 
+        var cells = [];
 
-                    if (sourceRange.rowCount < 1 || sourceRange.columnCount < 1) {
-                        showNotification("No data selected", "Please select a range of data and try again.");
-                    }
-                    else {
-                        console.time('Get Cells');
-                        var rows = [];
-                        for (var i = 0; i < sourceRange.rowCount; i++) {
-                            var col = [];
-                            for (var j = 0; j < sourceRange.columnCount; j++) {
-
-                                // Create a proxy object for a 1-cell range and load its value and format
-                                // Note: Because this is a range, I am retrieving a values array, even though
-                                // it will contain just one value for this one cell. 
-                                var cell = sourceRange.getCell(i, j).load(["values","format/*", "format/font"]);
-                                col.push(cell);
-                            }
-                            rows.push(col);
-                        }
-                        console.timeEnd('Get Cells');
-                        return rows;
-
-                    }
-
-                })
-                   // Run the queued-up commands
-                .then(ctx.sync)
-                .then(function (cells) {
-                    // I have now loaded all the data I need to produce markdown for the selected range.
-                    var markdownString = MarkdownTableMaker.makeMarkdownTable(cells);
-                    if (markdownString.length > 0) {
-                        showNotification("Table markdown generated!", "");
-
-                        $("#markdown-result").text(markdownString);
-                    }
-                })
-                .then(ctx.sync)
-        })
-        .catch(errorHandler);
+        selectedRange = ctx.workbook.getSelectedRange().load("rowCount, columnCount");
+        return ctx.sync().then(function () {
+            for (var r = 0; r < selectedRange.rowCount; r++) {
+                var col = [];
+                for (var c = 0; c < selectedRange.columnCount; c++) {
+                    col.push(selectedRange.getCell(r, c).load("format/font/*, values"));
+                }
+                cells.push(col);
+            }
+            return cells;
+        });
     }
 
-    function copyToClipboard() {
+    function generateMarkdown(cells) {
+        for (var r = 0; r < cells.length; r++) {
+            cells[r] = cells[r].map(function (cell) {
+                return {
+                    bold: cell.format.font.bold,
+                    italic: cell.format.font.italic,
+                    value: cell.values[0][0],
+                };
+            });
+        }
+
+        var markdownString = MarkdownTableMaker.makeMarkdownTable(cells)
+
+        return markdownString;
+    }
+
+    function showMarkdownString(tableMarkdownAsString) {
+        $("#markdown-result").text(tableMarkdownAsString);
+    }
+
+    function onCopyClick() {
 
         // Make sure the text in markdown-result is selected
         $("#markdown-result").select();
@@ -138,7 +114,7 @@
     }
 
     // Helper function for treating errors
-    function errorHandler(error) {
+    function showError(error) {
         // Always be sure to catch any accumulated errors that bubble up from the Excel.run execution
         showNotification("Error", error);
         console.log("Error: " + error);
@@ -153,5 +129,26 @@
         $("#notificationBody").text(content);
         messageBanner.showBanner();
         messageBanner.toggleExpansion();
+    }
+
+    function loadSampleData() {
+
+        var values = [
+                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)],
+                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)],
+                        [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000)]
+        ];
+
+        // Run a batch operation against the Excel object model
+        Excel.run(function (ctx) {
+            // Create a proxy object for the active sheet
+            var sheet = ctx.workbook.worksheets.getActiveWorksheet();
+            // Queue a command to write the sample data to the worksheet
+            sheet.getRange("B3:D5").values = values;
+
+            // Run the queued-up commands, and return a promise to indicate task completion
+            return ctx.sync();
+        })
+        .catch(showError);
     }
 })();

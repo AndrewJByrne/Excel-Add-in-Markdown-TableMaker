@@ -82,10 +82,15 @@ var MarkdownTableMaker = (function() {
     // Create markdown for the given cell usign the value as well as
     // formatting info. 
     function markdownize(cell) {
-        // I always get an array of values in this 1-cell range. 
-        var value = cell.values[0][0];
-        value = detectUrl(value);
-        value = addSugar(value, cell.format);
+        var value = detectUrl(cell.value);
+
+        if (cell.bold) {
+            value = "**" + value + "**";
+        }
+
+        if (cell.italic) {
+            value = "_" + value + "_";
+        }
         return value;
     }
 
@@ -100,31 +105,17 @@ var MarkdownTableMaker = (function() {
             newValue = prefix + "[" + value + "](" + value + ")";
         }
         return newValue;
-    }
 
-    // Regex to detect a URL
-    function isUrl(text) {
-        return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
-    }
-
-    // Regex to detect and image file name
-    function isImage(text) {
-        return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
-    }
-
-    // Use the formatting info on the cell to add markup for a bold style 
-    function addSugar(value, format) {
-        if (format.bold) {
-            value = "**" + value + "**";
+        // Regex to detect a URL
+        function isUrl(text) {
+            return (typeof (text) === 'string') && /[(https?)|(file)]:\/\/.+$/.test(text);
         }
 
-        if (format.italic) {
-            value = "_" + value + "_";
+        // Regex to detect and image file name
+        function isImage(text) {
+            return (typeof (text) === 'string') && /.+\.(jpeg|jpg|gif|png)$/.test(text);
         }
-
-        return value;
     }
-  
-  
+
 })();
 
