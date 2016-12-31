@@ -1,5 +1,5 @@
 ﻿// markdown-table-maker.js
-var MarkdownTableMaker = (function() {
+var MarkdownTableMaker = (function () {
     // expose to public
     return {
         // public name   : name of internal function
@@ -10,7 +10,11 @@ var MarkdownTableMaker = (function() {
      * Takes in an array of Excel cells and returns a string that represents this range in
      * table Markdown.
      */
-    function makeMarkdownTable(cells) {
+    function makeMarkdownTable(rows) {
+
+        // Abort if we don't have any data. Should really check for thsi further up the stack. 
+        if (rows.length <= 0) return;
+
         var markdownString = "";
 
         // I am demonstrating two ways of generating the markdown string. This first method uses the
@@ -22,12 +26,15 @@ var MarkdownTableMaker = (function() {
 
         // First row is the header row
         markdownString = markdownString.concat('| ');
-        markdownString = markdownString.concat(cells[0].map(markdownize).join('| '));
+        markdownString = markdownString.concat(rows[0].map(markdownize).join('| '));
         markdownString = markdownString.concat('|\n');
 
         // Add the header delimeter
         markdownString = markdownString.concat('| ');
-        for (var cCount = 0; cCount < cells.length; cCount++) {
+
+        // We can't assume that #rows=#cols, i.e., that this is a square matrix. 
+        // Find the number of columns from the first row. 
+        for (var cCount = 0; cCount < rows[0].length; cCount++) {
             // Note: By adding colons to left and right of hyphens in the
             // header delimeter row, I am making all content center-align
             markdownString = markdownString.concat(':---:');
@@ -36,9 +43,9 @@ var MarkdownTableMaker = (function() {
         markdownString = markdownString.concat('\n');
 
         // Now the rest of the rows
-        for (var i = 1; i < cells.length; i++) {
+        for (var i = 1; i < rows.length; i++) {
             markdownString = markdownString.concat('| ');
-            markdownString = markdownString.concat(cells[i].map(markdownize).join('| '));
+            markdownString = markdownString.concat(rows[i].map(markdownize).join('| '));
             markdownString = markdownString.concat('|\n');
         }
         console.timeEnd('Method #1');
